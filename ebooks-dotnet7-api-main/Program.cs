@@ -35,7 +35,7 @@ ebooks.MapPost("", CrearEBookAsync);
 ebooks.MapGet("", ObtenerTodosDisponiblesAsync);
 ebooks.MapPut("/{id}", ActualizarEBookAsync);
 ebooks.MapPut("/{id}/change-availability", CambiarDisponibilidadAsync);
-ebooks.MapPut("/{id}/increment-stock)", AumentarStockAsync);
+ebooks.MapPut("/{id}/increment-stock", AumentarStockAsync);
 ebooks.MapPost("/purchase", RealizarCompraAsync);
 ebooks.MapDelete("/{id}", EliminarEBookAsync);
 
@@ -49,13 +49,13 @@ async Task<IResult> CrearEBookAsync(EBook eBook, DataContext context)
     await context.SaveChangesAsync();
     return Results.Created($"/todoitems/{eBook.Id}", eBook);
 }
-async Task<IResult> ActualizarEBookAsync(int id, EBook eBooks, DataContext context)
+async Task<IResult> ActualizarEBookAsync(int id, ActualizarDto actualizarDto, DataContext context)
 {
     var eBook = await context.EBooks.FindAsync(id);
     if (eBook is null) 
     return TypedResults.NotFound();
 
-    eBook.Title =eBooks.Title;
+    eBook.Title = actualizarDto.Title;
     await context.SaveChangesAsync();
     return TypedResults.Ok(eBook);
 }
@@ -75,23 +75,24 @@ async Task<IResult> CambiarDisponibilidadAsync(int id,DataContext context)
     }else{
         eBook.IsAvailable = true;
     }
+    
+    await context.SaveChangesAsync();
     return TypedResults.Ok(eBook);
 }
-async Task<IResult> AumentarStockAsync(int id, EBook eBooks,DataContext context)
+async Task<IResult> AumentarStockAsync(int id, IncrementarStockDto incrementarStockDto, DataContext context)
 {
     var eBook = await context.EBooks.FindAsync(id);
     if (eBook is null) 
     return TypedResults.NotFound();
 
-    eBook.Stock = eBooks.Stock;
+    eBook.Stock = incrementarStockDto.Stock;
+    await context.SaveChangesAsync();
 
     return TypedResults.Ok(eBook);
 }
-async Task<IResult> RealizarCompraAsync(EBook eBook, DataContext context)
+async Task<IResult> RealizarCompraAsync(CompraDto compraDto, DataContext context)
 {
-    context.EBooks.Add(eBook);
-    await context.SaveChangesAsync();
-    return Results.Created($"/todoitems/{eBook.Id}", eBook);
+    return TypedResults.Ok(compraDto);
 }
 async Task<IResult> EliminarEBookAsync(int id, DataContext context)
 {

@@ -18,4 +18,7 @@ public class DataContext : DbContext
     /// Represents the eBooks table in the database.
     /// </summary>
     public DbSet<EBook> EBooks { get; set; }
+    public DbSet<IncrementarStockDto> incrementarStockDtos { get; set; }
+    public DbSet<ActualizarDto> actualizarDtos { get; set; }    
+    public DbSet<CompraDto> compraDtos{get;set;}
 }
